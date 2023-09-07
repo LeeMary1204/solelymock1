@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react'
+import Contact from './Contact'
+import axios from 'axios'
 
-function App() {
+
+function App () {
+
+  let [contacts, setContacts] = useState([])
+
+  const getListsData = async () => {
+    await axios.get('https://solelymockbackend.onrender.com/lists').then(async (response) => {
+      const { code, data } = response.data
+      if (code == 200) {
+        contacts = [...data]
+        setContacts(contacts)
+      }
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+
+  useEffect(() => {
+    getListsData()
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className='boxes'>
+        {
+          contacts.map((contact, index) => (
+            <Contact key={index} contact={contact} />
+          ))
+        }
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
